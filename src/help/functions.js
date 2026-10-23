@@ -21,6 +21,27 @@ export function formatDate(date) {
     return date.getFullYear() + '-' + (date.getMonth() + 1).toString().padStart(2, '0') + '-' + date.getDate().toString().padStart(2, '0');
 }
 
+export function showDialog(etat, participantID) {
+    let ind = etat.circle.participants.findIndex(({ id }) => id === participantID)
+    let ben = etat.circle.participants[ind]
+    let otherParticipants = document.getElementById('detail-contributeurs')
+    otherParticipants.innerHTML = ''
+
+    document.getElementById('detail-titre').textContent = `tour N° ${ind + 1}`
+    document.getElementById('detail-date').textContent = formatDate(etat.circle.dates_tour[ind])
+    document.getElementById('detail-beneficiaire').textContent = ben.nom
+    document.getElementById('detail-montant').textContent = `${Number(etat.circle.cotisation) * etat.circle.participants.length} MAD`
+
+    etat.circle.participants.forEach((par, index) => {
+        if (index === ind) return
+        let otherp = document.createElement('li')
+        otherp.textContent = par.nom
+        otherParticipants.append(otherp)
+    })
+
+    document.getElementById('detail-tour').showModal()
+}
+
 
 export function getDetails(etat, buttonType) {
     if (buttonType == "random") {
@@ -55,9 +76,14 @@ export function openDetails(etat, originalEtat = etat) {
         date.textContent = formatDate(etat.circle.dates_tour[i])
         tr.appendChild(date)
 
-        // name 
+        // name
         let ben = document.createElement('td')
-        ben.textContent = participant.nom
+        let ben_btn = document.createElement('button')
+        ben_btn.type = 'button'
+        ben_btn.classList.add("bg-gray-300")
+        ben_btn.textContent = participant.nom
+        ben_btn.addEventListener('click', () => showDialog(etat, participant.id))
+        ben.appendChild(ben_btn)
         tr.appendChild(ben)
 
 
@@ -97,6 +123,7 @@ export function openDetails(etat, originalEtat = etat) {
                 participant.termine = false
                 if (participantSource) participantSource.termine = false
             }
+            updateTourProgress(etat)
         });
         div2.append(pressDone)
         wrap.append(div, div2)
@@ -106,4 +133,10 @@ export function openDetails(etat, originalEtat = etat) {
         c.appendChild(tr)
     }
 
+    updateTourProgress(etat, originalEtat)
+}
+
+// update the progress of the tour when its updated
+function updateTourProgress(etat) {
+    document.getElementById('compteur-tours').textContent = `${etat.circle.participants.filter((p) => p.termine).length} tours terminés sur ${etat.circle.participants.length}`
 }

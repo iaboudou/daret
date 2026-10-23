@@ -1,7 +1,7 @@
 import { createChampParticipant } from './participants.js'
 import { etat } from './config.js'
 import { getDetails, formatDate, getNextDate } from './functions.js';
-import { reset, resetErrors } from './resrart.js';
+import { resetForm, resetErrors } from './resrart.js';
 import { validateName, validateCotisation, validatePeriodicite, validateDateDebut, nameAlreadyExists } from './validate.js';
 
 export function init() {
@@ -12,6 +12,10 @@ export function init() {
   for (let i = 0; i < 2; i++) {
     participants.append(createChampParticipant());
   }
+
+  document.getElementById('detail-fermer').addEventListener('click', () => {
+    document.getElementById('detail-tour').close()
+  })
 
   participants.addEventListener("click", (e) => {
     e.preventDefault()
@@ -81,6 +85,7 @@ export function init() {
     // participants
     let par = document.querySelectorAll('.participant-input')
     etat.circle.participants = []
+    let ID = 1
     for (let val of par) {
       if (val.value.trim() === '') {
         let err = document.getElementById('participants-erreur')
@@ -103,7 +108,8 @@ export function init() {
         return
       }
 
-      etat.circle.participants.push({ nom: val.value.trim(), termine: false })
+      etat.circle.participants.push({ nom: val.value.trim(), termine: false, id: ID })
+      ID++
     }
 
 
@@ -139,7 +145,7 @@ export function init() {
     d.innerHTML = ''
     d.append(t1, t2)
 
-    reset()
+    resetForm()
     getDetails(etat)
 
 
@@ -156,6 +162,39 @@ export function init() {
     document.getElementById("tirage-au-sort").addEventListener("click", (e) => {
       e.preventDefault()
       getDetails(etat, "random")
+    })
+
+
+    // in case of clicking "initializer" should reset the page 
+    document.getElementById('reinitialiser').addEventListener('click', () => {
+      resetForm()
+      resetErrors()
+
+      etat.tours = []
+      etat.circle = {
+        id: 0,
+        participants: [],
+        nbr_participants: 0,
+        cotisation: 0,
+        periodicite: 'hebdomadaire',
+        date_start: '',
+        date_end: '',
+        dates_tour: [],
+      }
+
+      participants.innerHTML = ''
+      for (let i = 0; i < 2; i++) {
+        participants.append(createChampParticipant())
+      }
+
+      document.getElementById('calendrier-corps').innerHTML = ''
+      document.getElementById('contenu-resultat').classList.add('hidden')
+      document.getElementById('etat-vide').classList.remove('hidden')
+      document.getElementById('resume-cagnotte').textContent = ''
+      document.getElementById('resume-total-cycle').textContent = ''
+      document.getElementById('resume-nb-tours').textContent = ''
+      document.getElementById('resume-dates').innerHTML = ''
+      document.getElementById('compteur-tours').textContent = ''
     })
 
   })

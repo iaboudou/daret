@@ -1,4 +1,4 @@
-export function reset() {
+export function resetForm() {
     const form = document.getElementById('daret-form');
     if (form) {
         form.reset();
