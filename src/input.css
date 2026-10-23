@@ -26,6 +26,14 @@
     @apply line-through;
   }
 
+  .cellule-statut {
+    @apply flex w-64 flex-row items-center justify-center gap-2;
+  }
+
+  .etiquette-statut {
+    @apply w-20 text-center;
+  }
+
   .prochain-tour {
     @apply border-l-4 border-daret-terre bg-white font-semibold;
   }
