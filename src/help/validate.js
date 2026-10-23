@@ -6,8 +6,9 @@ export function validateName(name) {
     return /^[a-zA-Z0-9_]{3,40}$/.test(name.trim());
 }
 
+// check if the user is already in the circle
 export function nameAlreadyExists(name) {
-    return etat.circle.participants.includes(name.trim())
+    return etat.circle.participants.some((p) => p.nom.trim().toLowerCase() == name.trim().toLowerCase());
 }
 
 // cotisation should be a number between 100 and 50000
@@ -37,14 +38,9 @@ export function validateDateDebut(value) {
     now.setHours(0, 0, 0, 0)
     date.setHours(0, 0, 0, 0)
 
-    if (date.getFullYear() > now.getFullYear() +100) {
-        return [false , "😂😂😂"]
-    } 
+    if (date.getFullYear() > now.getFullYear() + 100) {
+        return [false, "😂😂😂"]
+    }
 
     return [!Number.isNaN(date) && now <= date, "soiez serieux monsieur! 😳"]
-}
-
-// check if the user is already in the circle
-export function isUserAlreadyInCircle(name, liste) {
-    return liste.some((prenom) => prenom.trim().toLowerCase() == name.trim().toLowerCase());
 }

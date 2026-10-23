@@ -1,13 +1,13 @@
-import { validateName, isUserAlreadyInCircle } from './validate.js';
+import { validateName, nameAlreadyExists } from './validate.js';
 import { etat } from './config.js';
 
 // add new participant to participants
 export function addParticipant(nom) {
 
     if (!validateName(nom)) return
-    if (isUserAlreadyInCircle(nom, etat.circle.participants)) return
+    if (nameAlreadyExists(nom)) return
 
-    etat.circle.participants.push(nom.trim());
+    etat.circle.participants.push({ nom: nom.trim(), termine: false });
 }
 
 // create participant input field

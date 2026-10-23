@@ -103,7 +103,7 @@ export function init() {
         return
       }
 
-      etat.circle.participants.push(val.value.trim())
+      etat.circle.participants.push({ nom: val.value.trim(), termine: false })
     }
 
 

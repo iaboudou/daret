@@ -1,7 +1,6 @@
 // Données du cercle généré
 export let etat = {
     tours: [],
-    termines: new Set(),
     circle: {
         id: 0,
         participants: [],

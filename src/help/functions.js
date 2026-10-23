@@ -29,18 +29,19 @@ export function getDetails(etat, buttonType) {
             let j = Math.floor(Math.random() * (i + 1));
             [e.circle.participants[i], e.circle.participants[j]] = [e.circle.participants[j], e.circle.participants[i]];
         }
-        openDetails(e)
+        openDetails(e, etat)
         return
     }
     openDetails(etat)
 }
 
 // it  show up the tour informations
-export function openDetails(etat) {
+export function openDetails(etat, originalEtat = etat) {
     let c = document.getElementById('calendrier-corps');
     c.innerHTML = '';
 
     for (let i = 0; i < etat.circle.participants.length; i++) {
+        let participant = etat.circle.participants[i]
         let tr = document.createElement('tr')
         tr.classList.add('line-tour', 'h-[50px]')
 
@@ -56,7 +57,7 @@ export function openDetails(etat) {
 
         // name 
         let ben = document.createElement('td')
-        ben.textContent = etat.circle.participants[i]
+        ben.textContent = participant.nom
         tr.appendChild(ben)
 
 
@@ -73,7 +74,7 @@ export function openDetails(etat) {
 
         let div = document.createElement('div')
         div.classList.add("etiquette-statut", "w-1/2")
-        div.textContent = "à venir"
+        div.textContent = participant.termine ? "terminé" : "à venir"
 
         let div2 = document.createElement("div")
 
@@ -81,17 +82,20 @@ export function openDetails(etat) {
         let pressDone = document.createElement('button')
         pressDone.type = "button"
         pressDone.classList.add("w-[120px]", "h-[40px]", "p-2", "bg-blue-500", "text-xs", "rounded-lg", "font-semibold", "text-white", "cursor-pointer", "flex", "justify-center", "items-center")
-        pressDone.textContent = "marqué comme terminé"
+        pressDone.textContent = participant.termine ? "annuller" : "marqué comme terminé"
 
         pressDone.addEventListener('click', () => {
+            let participantSource = originalEtat.circle.participants.find(({ nom }) => nom === participant.nom)
             if (div.textContent === "à venir") {
-                div.textContent = "terminé";
-                pressDone.textContent = "annuller";
-                if (etat.termines) etat.termines.add(i + 1);
-            } else if (div.textContent == "terminé") {
-                pressDone.textContent = "marqué comme terminé";
+                div.textContent = "terminé"
+                pressDone.textContent = "annuller"
+                participant.termine = true
+                if (participantSource) participantSource.termine = true
+            } else if (div.textContent === "terminé") {
                 div.textContent = "à venir"
-                if (etat.termines) etat.termines.add(i - 1);
+                pressDone.textContent = "marqué comme terminé"
+                participant.termine = false
+                if (participantSource) participantSource.termine = false
             }
         });
         div2.append(pressDone)
